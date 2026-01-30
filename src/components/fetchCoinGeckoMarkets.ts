@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { fetchJson } from '../../api/fetchJson';
+import { fetchJson } from '../api/fetchJson';
 import type { CoinMarketData } from './types';
 
 const COINGECKO_MARKETS_URL =

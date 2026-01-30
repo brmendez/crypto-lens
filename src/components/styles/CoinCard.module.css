@@ -1,8 +1,10 @@
 @import './theme.module.css';
 
-.card {
+ .card {
   background: var(--color-card-bg);
+  /* border: none; */
   border: 1px solid var(--color-card-border);
+
   border-radius: 16px;
   padding: 1.5rem;
   transition: all 0.2s ease;

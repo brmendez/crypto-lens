@@ -48,16 +48,20 @@ crypto-lens/
 ├── public/
 ├── src/
 │   ├── components/
-│   │   └── CryptoProject/
-│   │       ├── CoinListItem.tsx
-│   │       ├── CryptoTracker.tsx
-│   │       ├── fetchCoinGeckoMarkets.ts
-│   │       ├── LoadingSkeleton.tsx
-│   │       ├── ThemeContext.tsx
+│   │   ├── CoinListItem.tsx
+│   │   ├── CryptoTracker.tsx
+│   │   ├── fetchCoinGeckoMarkets.ts
+│   │   ├── LoadingSkeleton.tsx
+│   │   ├── ThemeContext.tsx
+│   │   ├── types.ts
+│   │   └── styles/
+│   │       ├── CoinCard.module.css
+│   │       ├── CryptoTracker.module.css
+│   │       ├── LoadingSkeleton.module.css
+│   │       └── theme.module.css
 │   ├── App.tsx
 │   ├── main.tsx
-│   ├── App.css
-│   ├── index.css
+│   └── index.css
 ├── index.html
 ├── package.json
 ├── tsconfig.json
@@ -71,8 +75,16 @@ crypto-lens/
 
 ## Customization
 
-- To add more coins or change the data source, update the API URL in `fetchCoinGeckoMarkets.ts`.
-- To adjust the UI, edit the React components in `src/components/CryptoProject/`.
+### Adding More Coins
+To add more coins or change the data source, update the API URL in `src/components/fetchCoinGeckoMarkets.ts`.
+
+### Styling
+Component styles are organized using CSS Modules in `src/components/styles/`:
+- `theme.module.css` - Shared theme variables and color palette
+- Component-specific `.module.css` files are colocated with their components
+- Global styles (resets, fonts, base elements) are in `src/index.css`
+
+To customize colors or theme, edit the CSS variables in `src/components/styles/theme.module.css`.
 
 ## License
 
@@ -81,16 +93,4 @@ This project is MIT licensed.
 ---
 
 *CryptoLens: Fast, simple, and open-source crypto market tracking.*
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```

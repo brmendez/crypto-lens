@@ -1,5 +1,5 @@
 
-import { CryptoTracker } from "./components/CryptoProject/CryptoTracker"
+import { CryptoTracker } from "./components/CryptoTracker"
 function App() {
   return (
     <div>

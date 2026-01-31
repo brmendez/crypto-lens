@@ -52,7 +52,7 @@ const CryptoTrackerContent = () => {
           </div>
         </header>
 
-        {error && (
+        {(error && !cryptoList.length) && (
           <div className={styles.errorMessage}>
             <span className={styles.errorIcon}>⚠️</span>
             <span>{error}</span>

@@ -2,7 +2,6 @@
 
  .card {
   background: var(--color-card-bg);
-  /* border: none; */
   border-radius: 16px;
   padding: 1.5rem;
   box-shadow: 0 2px 8px var(--color-shadow);

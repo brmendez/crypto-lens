@@ -45,7 +45,7 @@ const CryptoTrackerContent = () => {
               ) : (
                 <>
                   <RefreshIcon />
-                  Refresh
+                  Refresh test
                 </>
               )}
             </button>

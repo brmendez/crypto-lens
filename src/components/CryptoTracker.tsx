@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useFetchMarketData } from './fetchCoinGeckoMarkets';
 import { CoinListItem } from './CoinListItem';
 import { LoadingSkeleton } from './LoadingSkeleton';
-import { ThemeProvider, useTheme } from './ThemeContext';
+import { ThemeProvider, useTheme, DARK_THEME, LIGHT_THEME } from './ThemeContext';
 import { MoonIcon, SunIcon, RefreshIcon } from './icons';
 import styles from './styles/CryptoTracker.module.css';
 
@@ -28,9 +28,9 @@ const CryptoTrackerContent = () => {
             <button
               className={styles.themeToggle}
               onClick={toggleTheme}
-              aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+              aria-label={`Switch to ${theme === LIGHT_THEME ? DARK_THEME : LIGHT_THEME} mode`}
             >
-              {theme === 'light' ? <MoonIcon /> : <SunIcon />}
+              {theme === LIGHT_THEME ? <MoonIcon /> : <SunIcon />}
             </button>
             <button
               className={styles.refreshButton}

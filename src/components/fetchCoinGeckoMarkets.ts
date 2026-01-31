@@ -30,7 +30,7 @@ export const useFetchMarketData = () => {
       setCryptoList(data);
     } catch (error) {
       setLoading(false);
-      setError(`Failed to fetch coins: ${error}`);
+      setError(`Failed to fetch market data. Please try again in a moment: ${error}`);
     }
   };
 

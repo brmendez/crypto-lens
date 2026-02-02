@@ -5,10 +5,21 @@ import type { CoinMarketData } from './types';
 const COINGECKO_MARKETS_URL =
   'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=12&page=1';
 
+export const FAILED_FETCH_ERROR_MESSAGE =
+  'Failed to fetch market data. Please try again in a moment';
+
 const fetchCoinGeckoMarkets = (): {
   marketData: Promise<CoinMarketData[]>;
 } => {
-  const marketData = fetchJson<CoinMarketData[]>(COINGECKO_MARKETS_URL);
+  const marketData = fetchJson<CoinMarketData[]>({
+    url: COINGECKO_MARKETS_URL,
+    options: {
+      method: 'GET',
+      headers: {
+        'x-cg-api-key': import.meta.env.VITE_CL_API_KEY,
+      },
+    },
+  });
 
   return {
     marketData,
@@ -30,7 +41,7 @@ export const useFetchMarketData = () => {
       setCryptoList(data);
     } catch (error) {
       setLoading(false);
-      setError(`Failed to fetch market data. Please try again in a moment: ${error}`);
+      setError(`${FAILED_FETCH_ERROR_MESSAGE}: ${error}`);
     }
   };
 

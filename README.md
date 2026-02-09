@@ -1,5 +1,6 @@
 
 # CryptoLens
+🔗 **Live Demo:** https://crypto-lens.onrender.com/
 
 CryptoLens is a minimal, real-time cryptocurrency market tracker built with Vite, React, and TypeScript. It fetches live market data from CoinGecko and displays key metrics for top coins in a clean, theme-switchable interface.
 

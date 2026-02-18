@@ -16,7 +16,7 @@ const fetchCoinGeckoMarkets = (): {
     options: {
       method: 'GET',
       headers: {
-        'x-cg-api-key': import.meta.env.VITE_CL_API_KEY,
+        'x-cg-demo-api-key': import.meta.env.VITE_CL_API_KEY,
       },
     },
   });

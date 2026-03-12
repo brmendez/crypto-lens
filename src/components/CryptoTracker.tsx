@@ -2,7 +2,12 @@ import { useEffect } from 'react';
 import { useFetchMarketData } from './fetchCoinGeckoMarkets';
 import { CoinListItem } from './CoinListItem';
 import { LoadingSkeleton } from './LoadingSkeleton';
-import { ThemeProvider, useTheme, DARK_THEME, LIGHT_THEME } from './ThemeContext';
+import {
+  ThemeProvider,
+  useTheme,
+  DARK_THEME,
+  LIGHT_THEME,
+} from './ThemeContext';
 import { MoonIcon, SunIcon, RefreshIcon } from './icons';
 import styles from './styles/CryptoTracker.module.css';
 
@@ -13,6 +18,15 @@ const CryptoTrackerContent = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleRefreshClick = () => {
+    window.gtag?.('event', 'crypto_data_refresh', {
+      had_error: !!error,
+      was_loading: loading,
+    });
+
+    fetchData();
+  };
 
   return (
     <div className={styles.container}>
@@ -34,7 +48,7 @@ const CryptoTrackerContent = () => {
             </button>
             <button
               className={styles.refreshButton}
-              onClick={fetchData}
+              onClick={handleRefreshClick}
               disabled={loading}
             >
               {loading ? (
@@ -52,7 +66,7 @@ const CryptoTrackerContent = () => {
           </div>
         </header>
 
-        {(error && !cryptoList.length) && (
+        {error && !cryptoList.length && (
           <div className={styles.errorMessage}>
             <span className={styles.errorIcon}>⚠️</span>
             <span>{error}</span>

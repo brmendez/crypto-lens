@@ -35,7 +35,9 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     if (savedTheme) {
       return savedTheme;
     }
-    return window.matchMedia(PREFERS_DARK_SCHEME).matches ? DARK_THEME : LIGHT_THEME;
+    return window.matchMedia(PREFERS_DARK_SCHEME).matches
+      ? DARK_THEME
+      : LIGHT_THEME;
   });
 
   useEffect(() => {
@@ -44,7 +46,12 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === LIGHT_THEME ? DARK_THEME : LIGHT_THEME));
+    const nextTheme = theme === LIGHT_THEME ? DARK_THEME : LIGHT_THEME;
+    setTheme(nextTheme);
+
+    window.gtag?.('event', 'theme_toggle', {
+      theme: nextTheme,
+    });
   };
 
   return (

@@ -1,6 +1,4 @@
-@import './theme.module.css';
-
- .card {
+.card {
   background: var(--color-card-bg);
   border-radius: 16px;
   padding: 1.5rem;

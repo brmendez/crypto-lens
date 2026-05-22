@@ -2,12 +2,7 @@ import { useEffect } from 'react';
 import { useFetchMarketData } from './fetchCoinGeckoMarkets';
 import { CoinListItem } from './CoinListItem';
 import { LoadingSkeleton } from './LoadingSkeleton';
-import {
-  ThemeProvider,
-  useTheme,
-  DARK_THEME,
-  LIGHT_THEME,
-} from './ThemeContext';
+import { useTheme, DARK_THEME, LIGHT_THEME } from './ThemeContext';
 import { MoonIcon, SunIcon, RefreshIcon } from './icons';
 import styles from './styles/CryptoTracker.module.css';
 
@@ -86,9 +81,5 @@ const CryptoTrackerContent = () => {
 };
 
 export const CryptoTracker = () => {
-  return (
-    <ThemeProvider>
-      <CryptoTrackerContent />
-    </ThemeProvider>
-  );
+  return <CryptoTrackerContent />;
 };

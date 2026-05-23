@@ -1,10 +1,13 @@
 import styles from './styles/LoadingSkeleton.module.css';
 
-export const LoadingSkeleton = () => {
-  // Render 10 skeleton cards to match the expected number of coins
+interface LoadingSkeletonProps {
+  count?: number;
+}
+
+export const LoadingSkeleton = ({ count = 10 }: LoadingSkeletonProps) => {
   return (
     <>
-      {Array.from({ length: 10 }).map((_, index) => (
+      {Array.from({ length: count }).map((_, index) => (
         <li key={index} className={styles.card}>
           <div className={styles.header}>
             <div className={styles.logo}></div>

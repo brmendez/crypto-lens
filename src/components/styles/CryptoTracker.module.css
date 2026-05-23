@@ -39,10 +39,40 @@
   font-weight: 400;
 }
 
+.searchSection {
+  position: relative;
+  flex: 2;
+  max-width: 420px;
+  min-width: 200px;
+}
+
 .controls {
   display: flex;
   gap: 1rem;
   align-items: center;
+}
+
+.backButton {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.backToTopButton {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.backToTopButton:hover {
+  background: var(--color-card-bg);
+  border-color: var(--color-accent-teal);
+  color: var(--color-text-primary);
 }
 
 .themeToggle {

@@ -8,15 +8,6 @@ interface SearchBarProps {
   activeIndex: number;
 }
 
-/**
- * Controlled combobox input for coin search.
- *
- * Keyboard navigation state lives in the parent (CryptoTracker) because arrow keys
- * and Enter must coordinate between this bar and the sibling SearchDropdown.
- *
- * @param onKeyDown - Keyboard handler delegated from the parent.
- * @param activeIndex - Index of the highlighted dropdown option; drives aria-activedescendant.
- */
 export const SearchBar = ({ onKeyDown, activeIndex }: SearchBarProps) => {
   const { query, setQuery, clearSearch } = useSearch();
   const isExpanded = query.length >= 2;
@@ -59,7 +50,7 @@ export const SearchBar = ({ onKeyDown, activeIndex }: SearchBarProps) => {
         {query && (
           <button
             className={styles.clearButton}
-            onClick={clearSearch}
+            onClick={() => clearSearch('button')}
             aria-label="Clear search"
             type="button"
           >

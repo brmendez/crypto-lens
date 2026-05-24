@@ -1,4 +1,4 @@
-import type { CoinMarketData } from './types';
+import type { CoinMarketData } from '../coinList.types';
 import styles from './styles/CoinCard.module.css';
 
 interface CoinListItemProps {

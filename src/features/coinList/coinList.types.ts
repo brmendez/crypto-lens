@@ -1,4 +1,3 @@
-// Markets
 export type CoinMarketData = {
   id: string;
   name: string;

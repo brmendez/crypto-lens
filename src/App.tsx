@@ -1,11 +1,12 @@
+import { CryptoTracker } from './components/CryptoTracker';
+import { SearchProvider } from './features/search/context/search.context';
 
-import { CryptoTracker } from "./components/CryptoTracker"
 function App() {
   return (
-    <div>
-     <CryptoTracker />
-    </div>
-  )
+    <SearchProvider>
+      <CryptoTracker />
+    </SearchProvider>
+  );
 }
 
-export default App
+export default App;

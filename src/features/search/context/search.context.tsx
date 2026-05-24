@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import type { CoinSearchResult } from '../search.types';
 import type { CoinMarketData } from '../../coinList/coinList.types';
@@ -23,6 +23,9 @@ const SearchContext = createContext<SearchContextType | undefined>(undefined);
 
 const USE_SEARCH_ERROR = 'useSearch must be used within a SearchProvider';
 
+/**
+ * Returns the SearchContext value. Must be called within a SearchProvider.
+ */
 // eslint-disable-next-line react-refresh/only-export-components
 export const useSearch = (): SearchContextType => {
   const context = useContext(SearchContext);
@@ -34,11 +37,30 @@ interface SearchProviderProps {
   children: ReactNode;
 }
 
+/**
+ * Provides search state and actions to the subtree.
+ *
+ * Owns two pieces of state: `query` (the current input value) and `selectedCoinId`
+ * (the chosen coin). Both are exposed through `useSearch()` — consumers never import
+ * a hook directly.
+ *
+ * URL sync: `selectedCoinId` is initialized from `?coin=` on mount. `selectCoin` and
+ * `clearSearch` call pushState; a popstate listener keeps the back button in sync.
+ */
 export const SearchProvider = ({ children }: SearchProviderProps) => {
   const [query, setQueryState] = useState('');
   const [selectedCoinId, setSelectedCoinId] = useState<string | null>(() =>
     new URLSearchParams(window.location.search).get('coin')
   );
+
+  useEffect(() => {
+    const onPop = () => {
+      setSelectedCoinId(new URLSearchParams(window.location.search).get('coin'));
+      setQueryState('');
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
 
   const { results, isLoading: isLoadingResults } = useCoinSearch(query);
   const {

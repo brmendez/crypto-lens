@@ -23,7 +23,7 @@ const CryptoTrackerContent = () => {
     refetchSingleCoin,
   } = useSearch();
 
-  const [rawActiveIndex, setActiveIndex] = useState(-1);
+  const [rawActiveIndex, setRawActiveIndex] = useState(-1);
   const activeIndex = results.length > 0 ? Math.min(rawActiveIndex, results.length - 1) : -1;
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -47,22 +47,22 @@ const CryptoTrackerContent = () => {
     if (!results.length) return;
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setActiveIndex((i) => Math.min(i + 1, results.length - 1));
+      setRawActiveIndex((i) => Math.min(i + 1, results.length - 1));
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      setActiveIndex((i) => Math.max(i - 1, 0));
+      setRawActiveIndex((i) => Math.max(i - 1, 0));
     } else if (e.key === 'Enter' && activeIndex >= 0) {
       selectCoin(results[activeIndex].id);
-      setActiveIndex(-1);
+      setRawActiveIndex(-1);
     } else if (e.key === 'Escape') {
       clearSearch();
-      setActiveIndex(-1);
+      setRawActiveIndex(-1);
     }
   };
 
   const handleSelectCoin = (id: string) => {
     selectCoin(id);
-    setActiveIndex(-1);
+    setRawActiveIndex(-1);
   };
 
   return (
@@ -76,7 +76,7 @@ const CryptoTrackerContent = () => {
             </p>
           </div>
           <div className={styles.searchSection}>
-            <SearchBar onKeyDown={handleSearchKeyDown} />
+            <SearchBar onKeyDown={handleSearchKeyDown} activeIndex={activeIndex} />
             <SearchDropdown activeIndex={activeIndex} onSelect={handleSelectCoin} />
           </div>
           <div className={styles.controls}>

@@ -1,13 +1,26 @@
 import type { KeyboardEvent } from 'react';
 import { useSearch } from '../context/search.context';
+import { SEARCH_DROPDOWN_ID, SEARCH_OPTION_ID_PREFIX } from '../../../lib/constants';
 import styles from './styles/SearchBar.module.css';
 
 interface SearchBarProps {
   onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
+  activeIndex: number;
 }
 
-export const SearchBar = ({ onKeyDown }: SearchBarProps) => {
+/**
+ * Controlled combobox input for coin search.
+ *
+ * Keyboard navigation state lives in the parent (CryptoTracker) because arrow keys
+ * and Enter must coordinate between this bar and the sibling SearchDropdown.
+ *
+ * @param onKeyDown - Keyboard handler delegated from the parent.
+ * @param activeIndex - Index of the highlighted dropdown option; drives aria-activedescendant.
+ */
+export const SearchBar = ({ onKeyDown, activeIndex }: SearchBarProps) => {
   const { query, setQuery, clearSearch } = useSearch();
+  const isExpanded = query.length >= 2;
+  const activeDescendant = activeIndex >= 0 ? `${SEARCH_OPTION_ID_PREFIX}-${activeIndex}` : undefined;
 
   return (
     <div className={styles.wrapper}>
@@ -28,12 +41,18 @@ export const SearchBar = ({ onKeyDown }: SearchBarProps) => {
         </svg>
         <input
           type="text"
+          role="combobox"
           className={styles.input}
           placeholder="Search coins..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={onKeyDown}
           aria-label="Search cryptocurrencies"
+          aria-haspopup="listbox"
+          aria-expanded={isExpanded}
+          aria-controls={SEARCH_DROPDOWN_ID}
+          aria-autocomplete="list"
+          aria-activedescendant={activeDescendant}
           autoComplete="off"
           spellCheck={false}
         />

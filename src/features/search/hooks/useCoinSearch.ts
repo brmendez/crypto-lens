@@ -10,6 +10,15 @@ interface SearchResponse {
 const DEBOUNCE_MS = 350;
 const MIN_QUERY_LENGTH = 2;
 
+/**
+ * Searches CoinGecko for coins matching the given query string.
+ * Debounced 350ms; skips queries shorter than 2 characters.
+ * Results are cached in memory for the lifetime of the parent provider —
+ * re-typing a previous query is instant with no network cost.
+ *
+ * @param query - The search string typed by the user.
+ * @returns `results` — matched coins; `isLoading` — true while a network request is in flight.
+ */
 export const useCoinSearch = (query: string) => {
   const [results, setResults] = useState<CoinSearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);

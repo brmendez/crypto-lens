@@ -7,7 +7,7 @@ CryptoLens is a minimal, real-time cryptocurrency market tracker built with Vite
 ## Features
 
 - **Live Market Data:** Fetches up-to-date prices and 24h changes for major cryptocurrencies using the CoinGecko API.
-- **Minimal UI:** No icons, images, or extra styling—just the essentials for fast, distraction-free tracking.
+- **Coin Search:** Search for any coin by name or symbol. Results are debounced and cached in memory. Selecting a coin filters the view to that coin and syncs the selection to the URL (`?coin=<id>`), so deep links and the browser back button work.
 - **Theme Toggle:** Switch between light and dark modes. Theme preference is saved in localStorage.
 - **TypeScript & React:** Built with modern React and TypeScript for reliability and maintainability.
 - **Vite Powered:** Fast development and build times with Vite.
@@ -44,22 +44,40 @@ Open [http://localhost:5173](http://localhost:5173) in your browser to view the 
 
 ## Project Structure
 
+Feature-based architecture — each feature owns its components, hooks, types, and context.
+
 ```
 crypto-lens/
 ├── public/
 ├── src/
+│   ├── api/
+│   │   └── fetchJson.ts            # Base fetch utility
 │   ├── components/
-│   │   ├── CoinListItem.tsx
-│   │   ├── CryptoTracker.tsx
-│   │   ├── fetchCoinGeckoMarkets.ts
-│   │   ├── LoadingSkeleton.tsx
-│   │   ├── ThemeContext.tsx
-│   │   ├── types.ts
-│   │   └── styles/
-│   │       ├── CoinCard.module.css
-│   │       ├── CryptoTracker.module.css
-│   │       ├── LoadingSkeleton.module.css
-│   │       └── theme.module.css
+│   │   ├── CryptoTracker.tsx       # App shell; coordinates list and search views
+│   │   └── ThemeContext.tsx
+│   ├── features/
+│   │   ├── coinList/               # Market list feature
+│   │   │   ├── coinList.types.ts
+│   │   │   ├── components/
+│   │   │   │   ├── CoinListItem.tsx
+│   │   │   │   └── LoadingSkeleton.tsx
+│   │   │   └── hooks/
+│   │   │       └── useFetchMarketData.ts
+│   │   └── search/                 # Search feature
+│   │       ├── search.types.ts
+│   │       ├── context/
+│   │       │   └── search.context.tsx
+│   │       ├── components/
+│   │       │   ├── SearchBar.tsx
+│   │       │   └── SearchDropdown.tsx
+│   │       └── hooks/
+│   │           ├── useCoinSearch.ts
+│   │           └── useFetchSingleCoin.ts
+│   ├── lib/
+│   │   └── constants.ts
+│   ├── shared/
+│   │   └── components/
+│   │       └── icons.tsx
 │   ├── App.tsx
 │   ├── main.tsx
 │   └── index.css
@@ -76,16 +94,11 @@ crypto-lens/
 
 ## Customization
 
-### Adding More Coins
-To add more coins or change the data source, update the API URL in `src/components/fetchCoinGeckoMarkets.ts`.
+### Changing the Coin List
+To change which coins are fetched by default, update the API URL in `src/features/coinList/hooks/useFetchMarketData.ts`.
 
 ### Styling
-Component styles are organized using CSS Modules in `src/components/styles/`:
-- `theme.module.css` - Shared theme variables and color palette
-- Component-specific `.module.css` files are colocated with their components
-- Global styles (resets, fonts, base elements) are in `src/index.css`
-
-To customize colors or theme, edit the CSS variables in `src/components/styles/theme.module.css`.
+Component styles use CSS Modules colocated with each component (e.g. `SearchBar.module.css` next to `SearchBar.tsx`). Design tokens (colors, spacing) are defined as CSS custom properties in `src/index.css` and `src/components/styles/theme.module.css`.
 
 ## License
 

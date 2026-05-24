@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { fetchJson } from '../../../api/fetchJson';
 import type { CoinSearchResult } from '../search.types';
 import { COINGECKO_BASE_URL, COINGECKO_REQUEST_OPTIONS } from '../../../lib/constants';
+import { trackEvent } from '../../../lib/analytics';
 
 interface SearchResponse {
   coins: CoinSearchResult[];
@@ -11,13 +12,9 @@ const DEBOUNCE_MS = 350;
 const MIN_QUERY_LENGTH = 2;
 
 /**
- * Searches CoinGecko for coins matching the given query string.
- * Debounced 350ms; skips queries shorter than 2 characters.
- * Results are cached in memory for the lifetime of the parent provider —
- * re-typing a previous query is instant with no network cost.
- *
- * @param query - The search string typed by the user.
- * @returns `results` — matched coins; `isLoading` — true while a network request is in flight.
+ * Debounced coin search against the CoinGecko search API.
+ * Results are cached in memory per query. GA4 search events fire on network requests only —
+ * cache hits are intentionally excluded to track clean, network-triggered signal.
  */
 export const useCoinSearch = (query: string) => {
   const [results, setResults] = useState<CoinSearchResult[]>([]);
@@ -32,6 +29,7 @@ export const useCoinSearch = (query: string) => {
 
     const cached = cacheRef.current.get(query);
     if (cached) {
+      // cache hit — intentionally skipped per analytics spec (network-only signal)
       setResults(cached);
       return;
     }
@@ -41,8 +39,14 @@ export const useCoinSearch = (query: string) => {
       try {
         const url = `${COINGECKO_BASE_URL}/search?query=${encodeURIComponent(query)}`;
         const data = await fetchJson<SearchResponse>({ url, options: COINGECKO_REQUEST_OPTIONS });
-        cacheRef.current.set(query, data.coins);
-        setResults(data.coins);
+        const coins = data.coins ?? [];
+        cacheRef.current.set(query, coins);
+        setResults(coins);
+        if (coins.length > 0) {
+          trackEvent('search_results_returned', { query, result_count: coins.length });
+        } else {
+          trackEvent('search_no_results', { query });
+        }
       } catch {
         setResults([]);
       } finally {

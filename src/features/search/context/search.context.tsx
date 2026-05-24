@@ -1,9 +1,10 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useCallback, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import type { CoinSearchResult } from '../search.types';
 import type { CoinMarketData } from '../../coinList/coinList.types';
 import { useCoinSearch } from '../hooks/useCoinSearch';
 import { useFetchSingleCoin } from '../hooks/useFetchSingleCoin';
+import { trackEvent } from '../../../lib/analytics';
 
 interface SearchContextType {
   query: string;
@@ -14,8 +15,10 @@ interface SearchContextType {
   isLoadingResults: boolean;
   isLoadingCoin: boolean;
   setQuery: (q: string) => void;
-  selectCoin: (id: string) => void;
-  clearSearch: () => void;
+  /** @param method — how the coin was chosen; passed to GA4 `search_coin_selected` (analytics only, does not affect selection behavior) */
+  selectCoin: (id: string, method?: 'mouse' | 'keyboard') => void;
+  /** @param method — what triggered the dismissal; passed to GA4 `search_cleared` (analytics only, does not affect clear behavior) */
+  clearSearch: (method?: 'button' | 'escape' | 'back_button') => void;
   refetchSingleCoin: () => void;
 }
 
@@ -23,9 +26,6 @@ const SearchContext = createContext<SearchContextType | undefined>(undefined);
 
 const USE_SEARCH_ERROR = 'useSearch must be used within a SearchProvider';
 
-/**
- * Returns the SearchContext value. Must be called within a SearchProvider.
- */
 // eslint-disable-next-line react-refresh/only-export-components
 export const useSearch = (): SearchContextType => {
   const context = useContext(SearchContext);
@@ -37,18 +37,8 @@ interface SearchProviderProps {
   children: ReactNode;
 }
 
-/**
- * Provides search state and actions to the subtree.
- *
- * Owns two pieces of state: `query` (the current input value) and `selectedCoinId`
- * (the chosen coin). Both are exposed through `useSearch()` — consumers never import
- * a hook directly.
- *
- * URL sync: `selectedCoinId` is initialized from `?coin=` on mount. `selectCoin` and
- * `clearSearch` call pushState; a popstate listener keeps the back button in sync.
- */
 export const SearchProvider = ({ children }: SearchProviderProps) => {
-  const [query, setQueryState] = useState('');
+  const [query, setQuery] = useState('');
   const [selectedCoinId, setSelectedCoinId] = useState<string | null>(() =>
     new URLSearchParams(window.location.search).get('coin')
   );
@@ -56,7 +46,7 @@ export const SearchProvider = ({ children }: SearchProviderProps) => {
   useEffect(() => {
     const onPop = () => {
       setSelectedCoinId(new URLSearchParams(window.location.search).get('coin'));
-      setQueryState('');
+      setQuery('');
     };
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
@@ -71,19 +61,33 @@ export const SearchProvider = ({ children }: SearchProviderProps) => {
 
   const isSearchActive = selectedCoinId !== null;
 
-  const setQuery = (q: string) => setQueryState(q);
+  const selectCoin = useCallback(
+    (id: string, method?: 'mouse' | 'keyboard') => {
+      trackEvent('search_coin_selected', {
+        coin_id: id,
+        query,
+        selection_method: method ?? 'mouse',
+      });
+      setSelectedCoinId(id);
+      setQuery('');
+      window.history.pushState({}, '', `?coin=${id}`);
+    },
+    [query]
+  );
 
-  const selectCoin = (id: string) => {
-    setSelectedCoinId(id);
-    setQueryState('');
-    window.history.pushState({}, '', `?coin=${id}`);
-  };
-
-  const clearSearch = () => {
-    setSelectedCoinId(null);
-    setQueryState('');
-    window.history.pushState({}, '', window.location.pathname);
-  };
+  const clearSearch = useCallback(
+    (method?: 'button' | 'escape' | 'back_button') => {
+      trackEvent('search_cleared', {
+        query,
+        had_active_coin: selectedCoinId !== null,
+        clear_method: method ?? 'button',
+      });
+      setSelectedCoinId(null);
+      setQuery('');
+      window.history.pushState({}, '', window.location.pathname);
+    },
+    [query, selectedCoinId]
+  );
 
   return (
     <SearchContext.Provider

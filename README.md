@@ -74,6 +74,7 @@ crypto-lens/
 │   │           ├── useCoinSearch.ts
 │   │           └── useFetchSingleCoin.ts
 │   ├── lib/
+│   │   ├── analytics.ts            # Typed trackEvent wrapper around window.gtag
 │   │   └── constants.ts
 │   ├── shared/
 │   │   └── components/
@@ -87,6 +88,21 @@ crypto-lens/
 ├── vite.config.ts
 └── README.md
 ```
+
+## Analytics
+
+Events are fired via the typed `trackEvent` utility in `src/lib/analytics.ts`, which wraps `window.gtag?.()` loaded by Google Tag Manager. Optional chaining ensures no throws if the GTM script hasn't initialized.
+
+| Event | Fires when | Key params |
+|---|---|---|
+| `search_results_returned` | Debounced query returns ≥1 coins (network only — cache hits excluded) | `query`, `result_count` |
+| `search_no_results` | Debounced query returns an empty result set | `query` |
+| `search_coin_selected` | User selects a coin from the dropdown | `coin_id`, `query`, `selection_method` |
+| `search_cleared` | User dismisses the search | `query`, `had_active_coin`, `clear_method` |
+| `crypto_data_refresh` | User manually refreshes market data | `had_error`, `was_loading` |
+| `theme_toggle` | User switches light/dark theme | `theme` |
+
+Add new events by extending `AnalyticsEventMap` in `src/lib/analytics.ts`.
 
 ## API Reference
 

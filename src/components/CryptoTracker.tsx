@@ -8,6 +8,7 @@ import { MoonIcon, SunIcon, RefreshIcon } from '../shared/components/icons';
 import { useSearch } from '../features/search/context/search.context';
 import { SearchBar } from '../features/search/components/SearchBar';
 import { SearchDropdown } from '../features/search/components/SearchDropdown';
+import { trackEvent } from '../lib/analytics';
 import styles from './styles/CryptoTracker.module.css';
 
 const CryptoTrackerContent = () => {
@@ -32,10 +33,7 @@ const CryptoTrackerContent = () => {
   const isRefreshLoading = isSearchActive ? isLoadingCoin : loading;
 
   const handleRefreshClick = () => {
-    window.gtag?.('event', 'crypto_data_refresh', {
-      had_error: !!error,
-      was_loading: isRefreshLoading,
-    });
+    trackEvent('crypto_data_refresh', { had_error: !!error, was_loading: isRefreshLoading });
     if (isSearchActive) {
       refetchSingleCoin();
     } else {
@@ -52,16 +50,16 @@ const CryptoTrackerContent = () => {
       e.preventDefault();
       setRawActiveIndex((i) => Math.max(i - 1, 0));
     } else if (e.key === 'Enter' && activeIndex >= 0) {
-      selectCoin(results[activeIndex].id);
+      selectCoin(results[activeIndex].id, 'keyboard');
       setRawActiveIndex(-1);
     } else if (e.key === 'Escape') {
-      clearSearch();
+      clearSearch('escape');
       setRawActiveIndex(-1);
     }
   };
 
   const handleSelectCoin = (id: string) => {
-    selectCoin(id);
+    selectCoin(id, 'mouse');
     setRawActiveIndex(-1);
   };
 
@@ -125,7 +123,7 @@ const CryptoTrackerContent = () => {
             </ul>
             {!isLoadingCoin && (
               <div className={styles.backButton}>
-                <button className={styles.backToTopButton} onClick={clearSearch}>
+                <button className={styles.backToTopButton} onClick={() => clearSearch('back_button')}>
                   ← Back to top coins
                 </button>
               </div>

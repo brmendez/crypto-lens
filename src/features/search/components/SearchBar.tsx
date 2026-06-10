@@ -1,6 +1,10 @@
 import type { KeyboardEvent } from 'react';
 import { useSearch } from '../context/search.context';
-import { SEARCH_DROPDOWN_ID, SEARCH_OPTION_ID_PREFIX } from '../../../lib/constants';
+import {
+  SEARCH_DROPDOWN_ID,
+  SEARCH_OPTION_ID_PREFIX,
+} from '../../../lib/constants';
+import { SearchIcon } from '../../../shared/components/icons';
 import styles from './styles/SearchBar.module.css';
 
 interface SearchBarProps {
@@ -11,25 +15,15 @@ interface SearchBarProps {
 export const SearchBar = ({ onKeyDown, activeIndex }: SearchBarProps) => {
   const { query, setQuery, clearSearch } = useSearch();
   const isExpanded = query.length >= 2;
-  const activeDescendant = activeIndex >= 0 ? `${SEARCH_OPTION_ID_PREFIX}-${activeIndex}` : undefined;
+  const activeDescendant =
+    activeIndex >= 0 ? `${SEARCH_OPTION_ID_PREFIX}-${activeIndex}` : undefined;
 
   return (
     <div className={styles.wrapper}>
       <div className={styles.inputContainer}>
-        <svg
-          className={styles.searchIcon}
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          <circle cx="11" cy="11" r="8" />
-          <line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </svg>
+        <div className={styles.searchIcon}>
+          <SearchIcon />
+        </div>
         <input
           type="text"
           role="combobox"
